@@ -1,45 +1,95 @@
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#00004b" />
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: '#FFFFFF',
+          tabBarInactiveTintColor: '#9E9E9E',
+          headerShown: true,
+          headerStyle: {
+            paddingTop: StatusBar.currentHeight,
+            backgroundColor: '#00004b',
           },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          headerTintColor: '#FFFFFF',
+          tabBarButton: HapticTab,
+          tabBarBackground: () => null,
+          tabBarStyle: Platform.select({
+            ios: {
+              position: 'absolute',
+              backgroundColor: '#00004b',
+            },
+            default: {
+              height: 80,
+              paddingBottom: 8,
+              backgroundColor: '#00004b',
+            },
+          }),
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="dashboard"
+          options={{
+            title: 'Dashboard',
+            tabBarIcon: ({ color, focused }) => (
+              <MaterialIcons
+                name={focused ? 'dashboard' : 'space-dashboard'}
+                size={28}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="auditorias"
+          options={{
+            title: 'Auditorías',
+            tabBarIcon: ({ color, focused }) => (
+              <MaterialIcons
+                name={focused ? 'check-box' : 'check-box-outline-blank'}
+                size={28}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="reportes"
+          options={{
+            title: 'Reportes',
+            tabBarIcon: ({ color, focused }) => (
+              <MaterialIcons
+                name={focused ? 'bar-chart' : 'insert-chart-outlined'}
+                size={28}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="usuario"
+          options={{
+            title: 'Usuario',
+            tabBarIcon: ({ color, focused }) => (
+              <MaterialIcons
+                name={focused ? 'person' : 'person-outline'}
+                size={28}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
