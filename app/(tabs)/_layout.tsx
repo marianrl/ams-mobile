@@ -1,14 +1,64 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Platform, StatusBar, Text } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { useColorScheme } from '@/hooks/useColorScheme';
+
+function AnimatedTabIcon({
+  name,
+  color,
+  focused,
+  label,
+  unfocusedName,
+}: {
+  name: string;
+  color: string;
+  focused: boolean;
+  label: string;
+  unfocusedName?: string;
+}) {
+  const scale = useRef(new Animated.Value(focused ? 1.15 : 1)).current;
+
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: focused ? 1.15 : 1,
+      useNativeDriver: true,
+      friction: 5,
+      tension: 120,
+    }).start();
+  }, [focused]);
+
+  return (
+    <Animated.View
+      style={{
+        alignItems: 'center',
+        transform: [{ scale }],
+        minWidth: 70,
+        marginTop: 8,
+      }}
+    >
+      <MaterialIcons
+        name={focused ? name : ((unfocusedName || name) as any)}
+        size={28}
+        color={color}
+      />
+      <Text
+        style={{
+          color,
+          fontSize: 12,
+          fontWeight: focused ? 'bold' : 'normal',
+          marginTop: 2,
+          textAlign: 'center',
+        }}
+      >
+        {label}
+      </Text>
+    </Animated.View>
+  );
+}
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#00004b" />
@@ -35,17 +85,19 @@ export default function TabLayout() {
               backgroundColor: '#00004b',
             },
           }),
+          tabBarShowLabel: false,
         }}
       >
         <Tabs.Screen
           name="dashboard"
           options={{
-            title: 'Dashboard',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialIcons
-                name={focused ? 'dashboard' : 'space-dashboard'}
-                size={28}
+              <AnimatedTabIcon
+                name="dashboard"
+                unfocusedName="space-dashboard"
                 color={color}
+                focused={focused}
+                label="Dashboard"
               />
             ),
           }}
@@ -53,12 +105,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="auditorias"
           options={{
-            title: 'Auditorías',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialIcons
-                name={focused ? 'check-box' : 'check-box-outline-blank'}
-                size={28}
+              <AnimatedTabIcon
+                name="check-box"
+                unfocusedName="check-box-outline-blank"
                 color={color}
+                focused={focused}
+                label="Auditorías"
               />
             ),
           }}
@@ -66,12 +119,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="reportes"
           options={{
-            title: 'Reportes',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialIcons
-                name={focused ? 'bar-chart' : 'insert-chart-outlined'}
-                size={28}
+              <AnimatedTabIcon
+                name="bar-chart"
+                unfocusedName="insert-chart-outlined"
                 color={color}
+                focused={focused}
+                label="Reportes"
               />
             ),
           }}
@@ -79,12 +133,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="usuario"
           options={{
-            title: 'Usuario',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialIcons
-                name={focused ? 'person' : 'person-outline'}
-                size={28}
+              <AnimatedTabIcon
+                name="person"
+                unfocusedName="person-outline"
                 color={color}
+                focused={focused}
+                label="Usuario"
               />
             ),
           }}
