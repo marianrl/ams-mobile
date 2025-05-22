@@ -91,6 +91,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="dashboard"
           options={{
+            title: 'Dashboard',
             tabBarIcon: ({ color, focused }) => (
               <AnimatedTabIcon
                 name="dashboard"
@@ -105,6 +106,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="auditorias"
           options={{
+            title: 'Auditorías',
             tabBarIcon: ({ color, focused }) => (
               <AnimatedTabIcon
                 name="check-box"
@@ -119,6 +121,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="reportes"
           options={{
+            title: 'Reportes',
             tabBarIcon: ({ color, focused }) => (
               <AnimatedTabIcon
                 name="bar-chart"
@@ -133,6 +136,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="usuario"
           options={{
+            title: 'Usuario',
             tabBarIcon: ({ color, focused }) => (
               <AnimatedTabIcon
                 name="person"
