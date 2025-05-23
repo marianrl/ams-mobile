@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
   bottomHalf: {
     flex: 1,
     backgroundColor: '#fafafa',
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
     justifyContent: 'center',
   },
   infoCard: {

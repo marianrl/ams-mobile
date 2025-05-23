@@ -42,7 +42,10 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <ChartCard title="Tendencia de Actividades" style={shadowStyle}>
+      <ChartCard
+        title="Tendencia de Actividades"
+        style={[shadowStyle, styles.firstCard]}
+      >
         <LineChart
           data={lineData}
           height={160}
@@ -129,17 +132,22 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#fafafa',
+  },
+  firstCard: {
+    margin: 16,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 16,
+    margin: 16,
   },
   halfWidth: {
     flex: 1,
   },
   lastCard: {
+    margin: 16,
     marginBottom: 32,
   },
 });
