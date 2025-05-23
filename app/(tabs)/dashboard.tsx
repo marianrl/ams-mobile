@@ -32,9 +32,17 @@ export default function DashboardScreen() {
     { value: 600, label: '2025', frontColor: '#4ECDC4' },
   ];
 
+  const shadowStyle = {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  };
+
   return (
     <ScrollView style={styles.container}>
-      <ChartCard title="Tendencia de Actividades">
+      <ChartCard title="Tendencia de Actividades" style={shadowStyle}>
         <LineChart
           data={lineData}
           height={160}
@@ -62,7 +70,7 @@ export default function DashboardScreen() {
 
       <View style={styles.row}>
         <ChartCard
-          style={styles.halfWidth}
+          style={[styles.halfWidth, shadowStyle]}
           title="Auditorías internas Completadas"
         >
           <PieChart
@@ -75,7 +83,10 @@ export default function DashboardScreen() {
             sectionAutoFocus
           />
         </ChartCard>
-        <ChartCard style={styles.halfWidth} title="Auditorias AFIP completadas">
+        <ChartCard
+          style={[styles.halfWidth, shadowStyle]}
+          title="Auditorias AFIP completadas"
+        >
           <PieChart
             data={pieData2}
             showText
@@ -88,7 +99,10 @@ export default function DashboardScreen() {
         </ChartCard>
       </View>
 
-      <ChartCard style={styles.lastCard} title="Volumen anual de auditorias">
+      <ChartCard
+        style={[styles.lastCard, shadowStyle]}
+        title="Volumen anual de auditorias"
+      >
         <BarChart
           data={barData}
           barWidth={22}

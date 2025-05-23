@@ -54,7 +54,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <StatusBar style="light" backgroundColor="#00004b" />
       <KeyboardAvoidingView
         style={{ flex: 1, backgroundColor: '#00004b' }}
@@ -115,7 +115,12 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </>
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>
+          Audit Management Studio® 2025. All rights reserved.
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -187,5 +192,14 @@ const styles = StyleSheet.create({
     color: '#fafafa',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  footerText: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#888',
+  },
+  footerContainer: {
+    backgroundColor: '#fafafa',
+    paddingVertical: 12,
   },
 });

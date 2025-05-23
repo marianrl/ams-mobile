@@ -1,7 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StatusBar, Text } from 'react-native';
+import { Animated, Image, Platform, StatusBar, Text } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 
@@ -58,6 +58,14 @@ function AnimatedTabIcon({
   );
 }
 
+const LogoRight = () => (
+  <Image
+    source={require('@/assets/images/Logo_izquierda.png')}
+    style={{ width: 50, height: 50, marginRight: 16 }}
+    resizeMode="contain"
+  />
+);
+
 export default function TabLayout() {
   return (
     <>
@@ -101,6 +109,7 @@ export default function TabLayout() {
                 label="Dashboard"
               />
             ),
+            headerRight: LogoRight,
           }}
         />
         <Tabs.Screen
@@ -116,6 +125,7 @@ export default function TabLayout() {
                 label="Auditorías"
               />
             ),
+            headerRight: LogoRight,
           }}
         />
         <Tabs.Screen
@@ -131,6 +141,7 @@ export default function TabLayout() {
                 label="Reportes"
               />
             ),
+            headerRight: LogoRight,
           }}
         />
         <Tabs.Screen
@@ -146,6 +157,7 @@ export default function TabLayout() {
                 label="Usuario"
               />
             ),
+            headerRight: LogoRight,
           }}
         />
       </Tabs>
