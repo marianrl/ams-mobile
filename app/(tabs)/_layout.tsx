@@ -1,7 +1,14 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, Platform, StatusBar, Text } from 'react-native';
+import {
+  Animated,
+  Image,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 
@@ -58,13 +65,18 @@ function AnimatedTabIcon({
   );
 }
 
-const LogoRight = () => (
-  <Image
-    source={require('@/assets/images/Logo_izquierda.png')}
-    style={{ width: 50, height: 50, marginRight: 16 }}
-    resizeMode="contain"
-  />
-);
+function LogoRight() {
+  const router = useRouter();
+  return (
+    <TouchableOpacity onPress={() => router.push('/(tabs)/dashboard')}>
+      <Image
+        source={require('@/assets/images/Logo_izquierda.png')}
+        style={{ width: 50, height: 50, marginRight: 16 }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  );
+}
 
 export default function TabLayout() {
   return (
