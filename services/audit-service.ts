@@ -2,13 +2,12 @@ import apiClient from '../config/api';
 import { Audit } from '../types/audit';
 
 export interface ApiResponse {
-  // Define la estructura de la respuesta de la API si es necesario
   data: any;
   status: number;
   auditId?: number;
 }
 
-const API_BASE_URL = 'http://10.0.2.2:8080/api/v1';
+const API_BASE_URL = 'https://ams-backend-0it4.onrender.com/api/v1';
 
 const auditService = {
   async fetchAllAudit(endpoint: string): Promise<ApiResponse> {
@@ -43,12 +42,11 @@ const auditService = {
           },
         }
       );
-      // Asegúrate de que la respuesta contiene el ID de la nueva auditoría
       const auditId = response.data.id;
       return {
         data: response.data,
         status: response.status,
-        auditId: auditId, // Incluye el ID en el objeto de retorno
+        auditId: auditId,
       };
     } catch (error: any) {
       if (error.response) {

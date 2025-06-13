@@ -1,15 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-// Replace with your actual backend URL
-const API_BASE_URL = 'http://10.0.2.2:8080/api/v1';
+// Reemplazar con la URL real del backend
+const API_BASE_URL = 'https://ams-backend-0it4.onrender.com/api/v1';
 
-// Create Axios instance with initial configuration
+// Crear instancia de Axios con configuración inicial
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Configure request interceptor to include token
+// Configurar interceptor de solicitud para incluir el token
 apiClient.interceptors.request.use(
   async (config) => {
     try {
@@ -27,28 +27,28 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Configure response interceptor to handle errors
+// Configurar interceptor de respuesta para manejar errores
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response) {
       const { status } = error.response;
       if (status === 401) {
-        // Remove token if it exists
+        // Eliminar token si existe
         await AsyncStorage.removeItem('authToken');
       } else if (status === 403) {
-        // Handle JWT errors
+        // Manejar errores de JWT
         if (error.response.data?.message?.includes('JWT')) {
-          console.error('Invalid token, redirecting to login...');
+          console.error('Token inválido, redirigiendo al login...');
           await AsyncStorage.removeItem('authToken');
-          // You'll need to implement navigation to login screen
+          // Necesitarás implementar la navegación a la pantalla de login
           // navigation.navigate('Login');
         } else {
-          console.error('Access denied:', error.response.data);
+          console.error('Acceso denegado:', error.response.data);
         }
       }
     } else {
-      console.error('Network or configuration error:', error.message);
+      console.error('Error de red o configuración:', error.message);
     }
     return Promise.reject(error);
   }

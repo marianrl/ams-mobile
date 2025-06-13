@@ -5,14 +5,13 @@ import { UserMailRequest } from '../types/user_mail_request';
 import { UserRequest } from '../types/user_request';
 
 export interface ApiResponse {
-  // Define la estructura de la respuesta de la API si es necesario
   status: number;
   data: User[];
   name: string;
   lastName: string;
 }
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_BASE_URL = 'https://ams-backend-0it4.onrender.com/api/v1';
 
 const userService = {
   async fetchAllUser(endpoint: string): Promise<ApiResponse> {
@@ -34,7 +33,10 @@ const userService = {
     userRequest: UserRequest
   ): Promise<number> {
     try {
-      const response = await apiClient.post(endpoint, userRequest);
+      const response = await apiClient.post(
+        `${API_BASE_URL}/${endpoint}`,
+        userRequest
+      );
 
       // Almacenar el token en AsyncStorage
       const token = response.data.token;
@@ -43,12 +45,12 @@ const userService = {
         console.log('Token stored:', token);
         return response.status;
       }
-      return 401; // If no token is received, treat as unauthorized
+      return 401;
     } catch (error: any) {
       if (error.response) {
         return error.response.status;
       }
-      return 500; // Return a generic error status
+      return 500;
     }
   },
 

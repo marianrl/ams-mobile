@@ -61,7 +61,6 @@ function InternasScreen({
     const offsetY = event.nativeEvent.contentOffset.y;
     setShowScrollTop(offsetY > 50);
 
-    // Check if we're near the bottom
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     const paddingToBottom = 20;
     const isCloseToBottom =
@@ -154,7 +153,6 @@ function AfipScreen({ scrollRef }: { scrollRef: React.RefObject<ScrollView> }) {
     const offsetY = event.nativeEvent.contentOffset.y;
     setShowScrollTop(offsetY > 50);
 
-    // Check if we're near the bottom
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     const paddingToBottom = 20;
     const isCloseToBottom =

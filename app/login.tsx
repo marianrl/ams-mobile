@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { jwtDecode } from 'jwt-decode';
 import React, { useState } from 'react';
@@ -18,12 +18,20 @@ import {
 import { userService } from '../services/user-service';
 import { UserRequest } from '../types/user_request';
 
+interface CustomJwtPayload {
+  exp: number;
+  iat: number;
+  lastName: string;
+  name: string;
+  role: number;
+  sub: string;
+}
+
 export default function LoginScreen() {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -38,7 +46,35 @@ export default function LoginScreen() {
       );
       const token = await AsyncStorage.getItem('authToken');
       if (status === 200 && token) {
-        const decodedToken = jwtDecode(token.replace('Bearer ', ''));
+        const decodedToken = jwtDecode<CustomJwtPayload>(
+          token.replace('Bearer ', '')
+        );
+
+        const getRoleString = (roleId: number) => {
+          switch (roleId) {
+            case 1:
+              return 'Administrador';
+            case 2:
+              return 'Auditor';
+            case 3:
+              return 'Administrador de Personal';
+            case 4:
+              return 'Gerente';
+            default:
+              return 'Usuario';
+          }
+        };
+
+        await AsyncStorage.setItem(
+          'userData',
+          JSON.stringify({
+            firstName: decodedToken.name,
+            fullName: `${decodedToken.name} ${decodedToken.lastName}`,
+            email: usuario,
+            role: getRoleString(decodedToken.role),
+          })
+        );
+
         router.replace('/dashboard');
         return;
       } else if (status === 401) {
@@ -60,7 +96,6 @@ export default function LoginScreen() {
         style={{ flex: 1, backgroundColor: '#00004b' }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Top Section */}
         <View style={styles.topSection}>
           <Image
             source={require('../assets/images/Logo.png')}
@@ -68,8 +103,6 @@ export default function LoginScreen() {
             resizeMode="contain"
           />
         </View>
-
-        {/* Bottom Section */}
         <View style={styles.bottomSection}>
           <Text style={styles.welcome}>Bienvenido/a</Text>
           <View style={styles.inputContainer}>

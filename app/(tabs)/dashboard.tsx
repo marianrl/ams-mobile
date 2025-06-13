@@ -1,36 +1,143 @@
 import { ChartCard } from '@/components/ChartCard';
+import { ThemedText } from '@/components/ThemedText';
+import { auditService } from '@/services/audit-service';
+import { Audit } from '@/types/audit';
+import { useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
 
 export default function DashboardScreen() {
   const screenWidth = Dimensions.get('window').width;
   const chartWidth = screenWidth - 140;
+  const [audits, setAudits] = useState<Audit[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const lineData = [
-    { value: 50, label: 'Ene' },
-    { value: 80, label: 'Feb' },
-    { value: 90, label: 'Mar' },
-    { value: 70, label: 'Abr' },
-    { value: 85, label: 'May' },
-  ];
+  useEffect(() => {
+    fetchAudits();
+  }, []);
 
-  const pieData1 = [
-    { value: 30, color: '#FF6B6B', text: '30%' },
-    { value: 70, color: '#4ECDC4', text: '70%', focused: true },
-  ];
+  const fetchAudits = async () => {
+    try {
+      const response = await auditService.fetchAllAudit('audit');
+      setAudits(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching audits:', error);
+      setLoading(false);
+    }
+  };
 
-  const pieData2 = [
-    { value: 40, color: '#FFD93D', text: '40%' },
-    { value: 60, color: '#6C5CE7', text: '60%', focused: true },
-  ];
+  const getMonthlyTrendData = () => {
+    const months = [
+      'Ene',
+      'Feb',
+      'Mar',
+      'Abr',
+      'May',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dic',
+    ];
+    const currentDate = new Date();
+    const last5Months = [];
 
-  const barData = [
-    { value: 250, label: '2021', frontColor: '#4ECDC4' },
-    { value: 500, label: '2022', frontColor: '#4ECDC4' },
-    { value: 745, label: '2023', frontColor: '#4ECDC4' },
-    { value: 320, label: '2024', frontColor: '#4ECDC4' },
-    { value: 600, label: '2025', frontColor: '#4ECDC4' },
-  ];
+    for (let i = 4; i >= 0; i--) {
+      const monthIndex = (currentDate.getMonth() - i + 12) % 12;
+      const year =
+        currentDate.getFullYear() - (currentDate.getMonth() - i < 0 ? 1 : 0);
+
+      const monthAudits = audits.filter((audit) => {
+        const auditDate = new Date(audit.auditDate);
+        return (
+          auditDate.getMonth() === monthIndex &&
+          auditDate.getFullYear() === year
+        );
+      });
+
+      last5Months.push({
+        value: monthAudits.length,
+        label: months[monthIndex],
+      });
+    }
+
+    return last5Months;
+  };
+
+  const getAuditTypeData = () => {
+    const internalAudits = audits.filter(
+      (audit) => audit.idTipoAuditoria.id !== 9
+    );
+    const afipAudits = audits.filter((audit) => audit.idTipoAuditoria.id === 9);
+
+    const internalCompleted = internalAudits.filter(
+      (audit) => audit.idAuditado?.id === 1
+    ).length;
+    const afipCompleted = afipAudits.filter(
+      (audit) => audit.idAuditado?.id === 1
+    ).length;
+
+    return {
+      internal: [
+        {
+          value: internalCompleted,
+          color: '#4ECDC4',
+          text: `${Math.round(
+            (internalCompleted / internalAudits.length) * 100
+          )}%`,
+        },
+        {
+          value: internalAudits.length - internalCompleted,
+          color: '#FF6B6B',
+          text: `${Math.round(
+            ((internalAudits.length - internalCompleted) /
+              internalAudits.length) *
+              100
+          )}%`,
+          focused: true,
+        },
+      ],
+      afip: [
+        {
+          value: afipCompleted,
+          color: '#4ECDC4',
+          text: `${Math.round((afipCompleted / afipAudits.length) * 100)}%`,
+        },
+        {
+          value: afipAudits.length - afipCompleted,
+          color: '#9C27B0',
+          text: `${Math.round(
+            ((afipAudits.length - afipCompleted) / afipAudits.length) * 100
+          )}%`,
+          focused: true,
+        },
+      ],
+    };
+  };
+
+  const getAnnualVolumeData = () => {
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - 4 + i);
+
+    return years.map((year) => {
+      const yearAudits = audits.filter((audit) => {
+        const auditDate = new Date(audit.auditDate);
+        return auditDate.getFullYear() === year;
+      });
+      return {
+        value: yearAudits.length,
+        label: year.toString(),
+        frontColor: '#4ECDC4',
+      };
+    });
+  };
+
+  const lineData = getMonthlyTrendData();
+  const { internal: pieData1, afip: pieData2 } = getAuditTypeData();
+  const barData = getAnnualVolumeData();
 
   const shadowStyle = {
     shadowColor: '#000',
@@ -39,6 +146,10 @@ export default function DashboardScreen() {
     shadowRadius: 8,
     elevation: 6,
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -64,8 +175,8 @@ export default function DashboardScreen() {
           hideRules={false}
           rulesColor="#E5E5E5"
           rulesType="solid"
-          noOfSections={5}
-          maxValue={100}
+          noOfSections={Math.ceil(Math.max(...lineData.map((d) => d.value)))}
+          maxValue={Math.ceil(Math.max(...lineData.map((d) => d.value)))}
           backgroundColor="transparent"
           showVerticalLines
         />
@@ -74,7 +185,7 @@ export default function DashboardScreen() {
       <View style={styles.row}>
         <ChartCard
           style={[styles.halfWidth, shadowStyle]}
-          title="Auditorías internas Completadas"
+          title="Auditorías internas"
         >
           <PieChart
             data={pieData1}
@@ -85,10 +196,24 @@ export default function DashboardScreen() {
             showValuesAsLabels
             sectionAutoFocus
           />
+          <View style={styles.legendContainer}>
+            <View style={styles.legendItem}>
+              <View
+                style={[styles.legendColor, { backgroundColor: '#4ECDC4' }]}
+              />
+              <ThemedText style={styles.legendText}>Auditadas</ThemedText>
+            </View>
+            <View style={styles.legendItem}>
+              <View
+                style={[styles.legendColor, { backgroundColor: '#FF6B6B' }]}
+              />
+              <ThemedText style={styles.legendText}>Sin auditar</ThemedText>
+            </View>
+          </View>
         </ChartCard>
         <ChartCard
           style={[styles.halfWidth, shadowStyle]}
-          title="Auditorias AFIP completadas"
+          title="Auditorías AFIP"
         >
           <PieChart
             data={pieData2}
@@ -99,6 +224,20 @@ export default function DashboardScreen() {
             showValuesAsLabels
             sectionAutoFocus
           />
+          <View style={styles.legendContainer}>
+            <View style={styles.legendItem}>
+              <View
+                style={[styles.legendColor, { backgroundColor: '#4ECDC4' }]}
+              />
+              <ThemedText style={styles.legendText}>Auditadas</ThemedText>
+            </View>
+            <View style={styles.legendItem}>
+              <View
+                style={[styles.legendColor, { backgroundColor: '#9C27B0' }]}
+              />
+              <ThemedText style={styles.legendText}>Sin auditar</ThemedText>
+            </View>
+          </View>
         </ChartCard>
       </View>
 
@@ -117,8 +256,8 @@ export default function DashboardScreen() {
           yAxisThickness={1}
           yAxisTextStyle={{ color: '#000000' }}
           xAxisLabelTextStyle={{ color: '#000000' }}
-          noOfSections={5}
-          maxValue={1000}
+          noOfSections={Math.ceil(Math.max(...barData.map((d) => d.value)) / 5)}
+          maxValue={Math.ceil(Math.max(...barData.map((d) => d.value)) / 5) * 5}
           width={chartWidth}
           height={160}
           initialSpacing={20}
@@ -149,5 +288,25 @@ const styles = StyleSheet.create({
   lastCard: {
     margin: 16,
     marginBottom: 32,
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+    marginTop: 8,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  legendText: {
+    fontSize: 12,
+    color: '#666666',
   },
 });

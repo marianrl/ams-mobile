@@ -1,7 +1,7 @@
 import { ChartCard } from '@/components/ChartCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Modal,
@@ -12,51 +12,71 @@ import {
   View,
 } from 'react-native';
 
-export default function UsuarioScreen() {
-  // Mock data
-  const firstName = 'Juan';
-  const fullName = 'Juan Pérez';
-  const email = 'juan.perez@email.com';
-  const role = 'Administrador';
+interface UserData {
+  firstName: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
 
+export default function UsuarioScreen() {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('userData');
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.removeItem('userData');
     setModalVisible(false);
     router.replace('/login');
   };
 
+  if (!userData) {
+    return null;
+  }
+
   return (
     <View style={{ flex: 1 }}>
-      {/* Top Half */}
       <View style={styles.topHalf}>
         <View style={styles.centeredContent}>
           <Image
             source={require('@/assets/images/react-logo.png')}
             style={styles.avatar}
           />
-          <Text style={styles.firstName}>{firstName}</Text>
-          <Text style={styles.fullName}>{fullName}</Text>
+          <Text style={styles.firstName}>{userData.firstName}</Text>
+          <Text style={styles.fullName}>{userData.fullName}</Text>
         </View>
       </View>
-      {/* Bottom Half */}
       <View style={styles.bottomHalf}>
         <ChartCard style={styles.infoCard}>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Nombre y Apellido: </Text>
-            <Text style={styles.value}>{fullName}</Text>
+            <Text style={styles.value}>{userData.fullName}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Email: </Text>
-            <Text style={styles.value}>{email}</Text>
+            <Text style={styles.value}>{userData.email}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Rol: </Text>
-            <Text style={styles.value}>{role}</Text>
+            <Text style={styles.value}>{userData.role}</Text>
           </View>
         </ChartCard>
         <TouchableOpacity
@@ -66,7 +86,6 @@ export default function UsuarioScreen() {
           <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
-      {/* Modal */}
       <Modal
         visible={modalVisible}
         transparent
@@ -163,11 +182,11 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     color: '#222',
-    fontSize: 16,
+    fontSize: 14,
   },
   value: {
     color: '#222',
-    fontSize: 16,
+    fontSize: 14,
     flexShrink: 1,
     textAlign: 'right',
   },

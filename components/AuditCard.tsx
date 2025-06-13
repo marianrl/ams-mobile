@@ -8,6 +8,7 @@ interface AuditCardProps extends ViewProps {
   date: string;
   status: 'AUDITADO' | 'SIN AUDITAR';
   onPressDetail?: () => void;
+  auditType?: 'AFIP' | 'Interna';
 }
 
 export function AuditCard({
@@ -16,6 +17,7 @@ export function AuditCard({
   date,
   status,
   onPressDetail,
+  auditType,
   style,
   ...props
 }: AuditCardProps) {
@@ -27,6 +29,17 @@ export function AuditCard({
         return '#FF5252';
       default:
         return '#4CAF50';
+    }
+  };
+
+  const getAuditTypeColor = (type: string) => {
+    switch (type) {
+      case 'AFIP':
+        return '#9C27B0';
+      case 'Interna':
+        return '#4ECDC4';
+      default:
+        return '#4ECDC4';
     }
   };
 
@@ -43,13 +56,25 @@ export function AuditCard({
           <TouchableOpacity style={styles.detailButton} onPress={onPressDetail}>
             <ThemedText style={styles.detailButtonText}>VER DETALLE</ThemedText>
           </TouchableOpacity>
-          <View
-            style={[
-              styles.statusPill,
-              { backgroundColor: getStatusColor(status) },
-            ]}
-          >
-            <ThemedText style={styles.statusText}>{status}</ThemedText>
+          <View style={styles.pillsContainer}>
+            {auditType && (
+              <View
+                style={[
+                  styles.statusPill,
+                  { backgroundColor: getAuditTypeColor(auditType) },
+                ]}
+              >
+                <ThemedText style={styles.statusText}>{auditType}</ThemedText>
+              </View>
+            )}
+            <View
+              style={[
+                styles.statusPill,
+                { backgroundColor: getStatusColor(status) },
+              ]}
+            >
+              <ThemedText style={styles.statusText}>{status}</ThemedText>
+            </View>
           </View>
         </View>
       </ChartCard>
@@ -88,6 +113,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 8,
+  },
+  pillsContainer: {
+    flexDirection: 'row',
+    gap: 8,
   },
   statusPill: {
     paddingHorizontal: 10,
