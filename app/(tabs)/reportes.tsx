@@ -187,6 +187,7 @@ export default function ReportesScreen() {
                   setStartDate(selectedDate);
                 }
               }}
+              negativeButton={{ label: 'Cancelar' }}
             />
           )}
 
@@ -202,6 +203,7 @@ export default function ReportesScreen() {
                   setEndDate(selectedDate);
                 }
               }}
+              negativeButton={{ label: 'Cancelar' }}
             />
           )}
 
@@ -311,6 +313,7 @@ export default function ReportesScreen() {
                   auditType={
                     audit.idTipoAuditoria.id === 9 ? 'AFIP' : 'Interna'
                   }
+                  auditId={audit.id}
                   onPressDetail={() => {}}
                 />
               ))}

@@ -1,3 +1,4 @@
+import { HapticTab } from '@/components/HapticTab';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
@@ -9,8 +10,6 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
 
 function AnimatedTabIcon({
   name,

@@ -89,6 +89,7 @@ function InternasScreen({
               auditNumber={audit.id}
               date={audit.auditDate}
               status={audit.idAuditado?.id === 1 ? 'AUDITADO' : 'SIN AUDITAR'}
+              auditId={audit.id}
               onPressDetail={() => {
                 console.log('Detail pressed for audit:', audit.id);
               }}
@@ -181,6 +182,7 @@ function AfipScreen({ scrollRef }: { scrollRef: React.RefObject<ScrollView> }) {
               auditNumber={audit.id}
               date={audit.auditDate}
               status={audit.idAuditado?.id === 1 ? 'AUDITADO' : 'SIN AUDITAR'}
+              auditId={audit.id}
               onPressDetail={() => {
                 console.log('Detail pressed for audit:', audit.id);
               }}

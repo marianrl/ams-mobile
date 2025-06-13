@@ -1,7 +1,7 @@
-import { Client } from './client';
-import { Branch } from './branch';
-import { Features } from './features';
 import { Audit } from './audit';
+import { Branch } from './branch';
+import { Client } from './client';
+import { Features } from './features';
 
 export interface AfipInput {
   id: number;
@@ -13,7 +13,7 @@ export interface AfipInput {
   client: Client;
   uoc: string;
   branch: Branch;
-  admissionDate: string;
+  admissionDate: string; // Will be in "dd-MM-yyyy" format
   features: Features;
   audit: Audit;
 }

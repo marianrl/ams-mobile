@@ -1,24 +1,19 @@
+import { Audit } from './audit';
+import { Branch } from './branch';
+import { Client } from './client';
+import { Features } from './features';
+
 export interface CommonInput {
   id: number;
   lastName: string;
   name: string;
-  cuil: number;
-  file: number;
+  cuil: string;
+  file: string;
   allocation: string;
-  client: { client: string };
+  client: Client;
   uoc: string;
-  branch: { branch: string };
-  admissionDate: string;
-  features: {
-    id: number;
-    auditType: { id: number; auditType: string };
-    answer: { id: number; answer: string };
-  };
-  audit: {
-    id: number;
-    auditNumber: number;
-    auditDate: string;
-    idTipoAuditoria: { id: number; auditType: string };
-    idAuditado: { id: number; audited: string };
-  };
+  branch: Branch;
+  admissionDate: string; // Will be in "dd-MM-yyyy" format
+  features: Features;
+  audit: Audit;
 }

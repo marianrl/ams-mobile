@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native';
 import { ChartCard } from './ChartCard';
 import { ThemedText } from './ThemedText';
@@ -9,6 +10,7 @@ interface AuditCardProps extends ViewProps {
   status: 'AUDITADO' | 'SIN AUDITAR';
   onPressDetail?: () => void;
   auditType?: 'AFIP' | 'Interna';
+  auditId: number;
 }
 
 export function AuditCard({
@@ -16,11 +18,13 @@ export function AuditCard({
   auditNumber,
   date,
   status,
-  onPressDetail,
   auditType,
+  auditId,
   style,
   ...props
 }: AuditCardProps) {
+  const router = useRouter();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'AUDITADO':
@@ -43,6 +47,13 @@ export function AuditCard({
     }
   };
 
+  const handlePressDetail = () => {
+    router.push({
+      pathname: '/audit-details',
+      params: { auditId, auditType },
+    });
+  };
+
   return (
     <View style={[styles.cardContainer, style]} {...props}>
       <ChartCard style={[styles.shadow, styles.card]}>
@@ -53,7 +64,10 @@ export function AuditCard({
         <ThemedText style={styles.cardLabel}>FECHA: {date}</ThemedText>
 
         <View style={styles.bottomRow}>
-          <TouchableOpacity style={styles.detailButton} onPress={onPressDetail}>
+          <TouchableOpacity
+            style={styles.detailButton}
+            onPress={handlePressDetail}
+          >
             <ThemedText style={styles.detailButtonText}>VER DETALLE</ThemedText>
           </TouchableOpacity>
           <View style={styles.pillsContainer}>
