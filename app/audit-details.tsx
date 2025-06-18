@@ -32,6 +32,7 @@ export default function AuditDetailsScreen() {
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
+      console.log('Audit Details - auditId:', auditId, 'auditType:', auditType);
       try {
         const response =
           auditType === 'AFIP'
@@ -44,8 +45,10 @@ export default function AuditDetailsScreen() {
                 String(auditId)
               );
 
+        console.log('Audit Details - Response:', response);
         if (response.status === 200) {
           setInputs(response.data);
+          console.log('Audit Details - Inputs set:', response.data);
         }
       } catch (error) {
         console.error('Error fetching inputs:', error);
