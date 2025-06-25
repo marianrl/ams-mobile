@@ -40,3 +40,7 @@ app-example
 
 # IDE
 .vscode/
+
+# Android/iOS build files
+android/
+ios/
