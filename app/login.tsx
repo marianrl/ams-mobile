@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { userService } from '../services/user-service';
 import { UserRequest } from '../types/user_request';
+import { useAuth } from './_layout';
 
 interface CustomJwtPayload {
   exp: number;
@@ -32,6 +33,7 @@ export default function LoginScreen() {
   const [contrasena, setContrasena] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { refreshAuthStatus } = useAuth();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -80,6 +82,8 @@ export default function LoginScreen() {
         const storedUserData = await AsyncStorage.getItem('userData');
 
         if (storedToken && storedUserData) {
+          // Refresh the authentication status to update the context
+          await refreshAuthStatus();
           router.replace('/(tabs)/dashboard');
         } else {
           Alert.alert('Error', 'Error al almacenar los datos de sesión');

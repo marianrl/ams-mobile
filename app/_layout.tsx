@@ -26,6 +26,7 @@ interface ModalContextType {
 interface AuthContextType {
   isAuthenticated: boolean | null;
   isLoading: boolean;
+  refreshAuthStatus: () => Promise<void>;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -83,6 +84,11 @@ export default function RootLayout() {
     }
   };
 
+  const refreshAuthStatus = async () => {
+    console.log('🔄 Refreshing authentication status...');
+    await checkAuthStatus();
+  };
+
   if (!loaded || isLoading) {
     return null;
   }
@@ -95,6 +101,7 @@ export default function RootLayout() {
   const authContext = {
     isAuthenticated,
     isLoading,
+    refreshAuthStatus: refreshAuthStatus,
   };
 
   return (
