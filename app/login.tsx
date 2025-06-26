@@ -75,7 +75,15 @@ export default function LoginScreen() {
           })
         );
 
-        router.replace('/dashboard');
+        // Verify that both token and user data are stored
+        const storedToken = await AsyncStorage.getItem('authToken');
+        const storedUserData = await AsyncStorage.getItem('userData');
+
+        if (storedToken && storedUserData) {
+          router.replace('/(tabs)/dashboard');
+        } else {
+          Alert.alert('Error', 'Error al almacenar los datos de sesión');
+        }
         return;
       } else if (status === 401) {
         Alert.alert('Error', 'Usuario o contraseña incorrectos');

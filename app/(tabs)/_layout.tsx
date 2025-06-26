@@ -82,6 +82,7 @@ export default function TabLayout() {
     <>
       <StatusBar barStyle="light-content" backgroundColor="#00004b" />
       <Tabs
+        initialRouteName="dashboard"
         screenOptions={{
           tabBarActiveTintColor: '#FFFFFF',
           tabBarInactiveTintColor: '#9E9E9E',
@@ -107,6 +108,12 @@ export default function TabLayout() {
           tabBarShowLabel: false,
         }}
       >
+        <Tabs.Screen
+          name="index"
+          options={{
+            href: null,
+          }}
+        />
         <Tabs.Screen
           name="dashboard"
           options={{

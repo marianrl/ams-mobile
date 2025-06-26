@@ -1,3 +1,4 @@
+import { useAuth } from '@/app/_layout';
 import { AuditCard } from '@/components/AuditCard';
 import { ScrollToTopButton } from '@/components/ScrollToTopButton';
 import { ThemedText } from '@/components/ThemedText';
@@ -20,6 +21,7 @@ function InternasScreen({
 }: {
   scrollRef: React.RefObject<ScrollView>;
 }) {
+  const { isAuthenticated } = useAuth();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [internasAudits, setInternasAudits] = useState<Audit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,34 +30,42 @@ function InternasScreen({
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setTimeout(() => {
-        auditService
-          .fetchAllAudit('audit')
-          .then((response) => {
-            const allAudits = response.data;
-            const filteredAudits = allAudits
-              .filter((audit: Audit) => audit.idTipoAuditoria.id !== 9)
-              .sort((a: Audit, b: Audit) => b.id - a.id);
-
-            const startIndex = 0;
-            const endIndex = page * ITEMS_PER_PAGE;
-            const paginatedAudits = filteredAudits.slice(startIndex, endIndex);
-
-            setInternasAudits(paginatedAudits);
-            setHasMore(endIndex < filteredAudits.length);
-            setLoading(false);
-          })
-          .catch(() => {
-            setInternasAudits([]);
-            setLoading(false);
-            setErrorMessage('Error al procesar la solicitud');
-          });
-      }, 100);
+    if (isAuthenticated) {
+      fetchData();
+    } else {
+      setInternasAudits([]);
+      setLoading(false);
     }
-    fetchData();
-  }, [page]);
+  }, [page, isAuthenticated]);
+
+  const fetchData = async () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      auditService
+        .fetchAllAudit('audit')
+        .then((response) => {
+          const allAudits = response.data;
+          const filteredAudits = allAudits
+            .filter((audit: Audit) => audit.idTipoAuditoria.id !== 9)
+            .sort((a: Audit, b: Audit) => b.id - a.id);
+
+          const startIndex = 0;
+          const endIndex = page * ITEMS_PER_PAGE;
+          const paginatedAudits = filteredAudits.slice(startIndex, endIndex);
+
+          setInternasAudits(paginatedAudits);
+          setHasMore(endIndex < filteredAudits.length);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error in InternasScreen:', error);
+          setInternasAudits([]);
+          setLoading(false);
+          setErrorMessage('Error al procesar la solicitud');
+        });
+    }, 100);
+  };
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -114,6 +124,7 @@ function InternasScreen({
 }
 
 function AfipScreen({ scrollRef }: { scrollRef: React.RefObject<ScrollView> }) {
+  const { isAuthenticated } = useAuth();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [afipAudits, setAfipAudits] = useState<Audit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -122,34 +133,42 @@ function AfipScreen({ scrollRef }: { scrollRef: React.RefObject<ScrollView> }) {
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setTimeout(() => {
-        auditService
-          .fetchAllAudit('audit')
-          .then((response) => {
-            const allAudits = response.data;
-            const filteredAudits = allAudits
-              .filter((audit: Audit) => audit.idTipoAuditoria.id === 9)
-              .sort((a: Audit, b: Audit) => b.id - a.id);
-
-            const startIndex = 0;
-            const endIndex = page * ITEMS_PER_PAGE;
-            const paginatedAudits = filteredAudits.slice(startIndex, endIndex);
-
-            setAfipAudits(paginatedAudits);
-            setHasMore(endIndex < filteredAudits.length);
-            setLoading(false);
-          })
-          .catch(() => {
-            setAfipAudits([]);
-            setLoading(false);
-            setErrorMessage('Error al procesar la solicitud');
-          });
-      }, 100);
+    if (isAuthenticated) {
+      fetchData();
+    } else {
+      setAfipAudits([]);
+      setLoading(false);
     }
-    fetchData();
-  }, [page]);
+  }, [page, isAuthenticated]);
+
+  const fetchData = async () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      auditService
+        .fetchAllAudit('audit')
+        .then((response) => {
+          const allAudits = response.data;
+          const filteredAudits = allAudits
+            .filter((audit: Audit) => audit.idTipoAuditoria.id === 9)
+            .sort((a: Audit, b: Audit) => b.id - a.id);
+
+          const startIndex = 0;
+          const endIndex = page * ITEMS_PER_PAGE;
+          const paginatedAudits = filteredAudits.slice(startIndex, endIndex);
+
+          setAfipAudits(paginatedAudits);
+          setHasMore(endIndex < filteredAudits.length);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error in AfipScreen:', error);
+          setAfipAudits([]);
+          setLoading(false);
+          setErrorMessage('Error al procesar la solicitud');
+        });
+    }, 100);
+  };
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;

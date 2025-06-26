@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { router } from 'expo-router';
 
 // Reemplazar con la URL real del backend
 const API_BASE_URL = 'https://ams-backend-0it4.onrender.com/api/v1';
@@ -33,18 +34,16 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response) {
       const { status } = error.response;
-      if (status === 401) {
+      if (status === 401 || status === 403) {
         // Eliminar token si existe
         await AsyncStorage.removeItem('authToken');
-      } else if (status === 403) {
-        // Manejar errores de JWT
-        if (error.response.data?.message?.includes('JWT')) {
-          console.error('Token inválido, redirigiendo al login...');
-          await AsyncStorage.removeItem('authToken');
-          // Necesitarás implementar la navegación a la pantalla de login
-          // navigation.navigate('Login');
-        } else {
-          console.error('Acceso denegado:', error.response.data);
+        await AsyncStorage.removeItem('userData');
+
+        // Redirigir al login
+        try {
+          router.replace('/login');
+        } catch (navigationError) {
+          console.error('Navigation error:', navigationError);
         }
       }
     } else {

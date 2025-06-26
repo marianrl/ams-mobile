@@ -1,3 +1,4 @@
+import { useAuth } from '@/app/_layout';
 import { ChartCard } from '@/components/ChartCard';
 import { ThemedText } from '@/components/ThemedText';
 import { auditService } from '@/services/audit-service';
@@ -7,14 +8,19 @@ import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
 
 export default function DashboardScreen() {
+  const { isAuthenticated } = useAuth();
   const screenWidth = Dimensions.get('window').width;
   const chartWidth = screenWidth - 140;
   const [audits, setAudits] = useState<Audit[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAudits();
-  }, []);
+    if (isAuthenticated) {
+      fetchAudits();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const fetchAudits = async () => {
     try {
